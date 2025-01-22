@@ -10,14 +10,55 @@ use Illuminate\Support\Facades\Storage;
 
 class AdController extends Controller
 {
-    public function index()
+    public function index($category = null)
     {
-        $ads = Ad::with(['user', 'images'])->latest()->paginate(5);
-        return view('ads.index', ['ads' => $ads]);
+        // Start the query for ads
+        $ads = Ad::with(['user', 'images'])->latest();
+
+        // If a category is provided, filter the ads by category
+        if ($category) {
+            $ads = $ads->where('category', $category);
+        }
+
+        // Apply search filter if the search term exists
+        if (request()->has('search') && request()->search) {
+            $ads = $ads->where('title', 'like', '%' . request()->search . '%');
+        }
+
+        // Apply price filters
+        if (request()->has('min_price') && request()->min_price) {
+            $ads = $ads->where('price', '>=', request()->min_price);
+        }
+
+        if (request()->has('max_price') && request()->max_price) {
+            $ads = $ads->where('price', '<=', request()->max_price);
+        }
+
+        // Apply status filter (state)
+        if (request()->has('status') && request()->status) {
+            $ads = $ads->where('state', request()->status);
+        }
+
+        // Paginate the results and append filter inputs to the pagination links
+        return view('ads.index', [
+            'ads' => $ads->paginate(5)->appends(request()->query()), // Include all query parameters in pagination links
+            'category' => $category,
+        ]);
     }
+
+
+
+
 
     public function short_view() {
         $ads = Ad::with(['user', 'images'])->latest()->take(3)->get();
+
+        if(request()->has("search")) {
+            $ads = $ads->filter(function($ad) {
+                return stripos($ad->title, request()->search) !== false;
+            });
+        }
+
         return view('welcome', ['ads' => $ads]);
     }
 
@@ -33,17 +74,20 @@ class AdController extends Controller
     }
 
     public function store(Request $request) {
+        //dd($request);
         request()->validate([
             'title' => ['required', 'min:3'],
             'description' => ['required', 'min:3'],
-            'price' => ['required'],
+            'price' => ['required', 'numeric'],
             'city' => ['required', 'min:3'],
             'province' => ['required', 'min:3'],
             'postal_code' => ['required', 'min:3'],
-            'image.*' => ['file', 'nullable', 'max:10000'],
+            'image' => ['nullable', 'array'], // Ensure images are an array
+            'image.*' => ['file', 'max:10240'], // Validate each file
             'category' => ['required', 'min:3'],
             'state' => ['required', 'min:3'],
         ]);
+        //dd($request);
         $ad = Ad::create([
             'title' => request('title'),
             'description' => request('description'),
@@ -55,11 +99,12 @@ class AdController extends Controller
             'category' => request('category'),
             'state' => request('state'),
         ]);
+        //dd($request->file('image'));
         if ($request->hasFile('image')) {
             foreach ($request->file('image') as $file) {
                 $filePath = $file->store('images', 'public');
 
-                image::create([
+                Image::create([
                     'ad_id' => $ad->id,
                     'user_id' => auth()->id(),
                     'path' => $filePath,
@@ -111,13 +156,13 @@ class AdController extends Controller
                 ]);
             }
         }
-        return redirect('/profile/index/' . $ad->user_id);
+        return redirect('/profile/index/');
 
     }
     public function destroy(Ad $ad) {
         $user = $ad->user_id;
         $ad->delete();
-        return redirect('/profile/index/' . $user);
+        return redirect('/profile/index/');
     }
 
 }

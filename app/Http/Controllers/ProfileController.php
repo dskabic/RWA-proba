@@ -60,7 +60,8 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
-    public function index(User $user) {
+    public function index(Request $request)  {
+        $user = $request->user();
         // Eager load 'ads', their 'images', and the 'user' relationship
         $user = User::with(['ads.images', 'ads.user'])->findOrFail($user->id);
 

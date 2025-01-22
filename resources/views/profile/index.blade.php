@@ -8,7 +8,7 @@
                     <div class="flex-shrink-0 w-1/3">
                         <img src="{{ Storage::url($ad->images->first()->path) }}"
                              alt="Image for {{ $ad->title }}"
-                             class="w-full h-40 object-cover rounded-l-lg">
+                             class="w-full h-40 object-cover rounded-lg">
                     </div>
                 @else
                     <div class="flex-shrink-0 w-1/3">
@@ -64,7 +64,7 @@
                         @csrf
                         @method('DELETE')
                         <button type="submit"
-                                class="px-4 py-2 text-sm font-medium text-white bg-red-500 rounded hover:bg-red-600">
+                                class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded hover:bg-red-500">
                             Delete
                         </button>
                     </form>

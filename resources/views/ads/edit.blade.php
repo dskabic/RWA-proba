@@ -1,167 +1,227 @@
 <x-layout>
-    <x-slot:heading>Ads page</x-slot:heading>
-    <h1>Edit the ad: {{$ad->title}}</h1>
-    <form action="/ads/{{$ad->id}}" method="POST" enctype="multipart/form-data">
+    <x-slot:heading>Edit Ad</x-slot:heading>
+    <div class="max-w-3xl mx-auto bg-white shadow-lg rounded-lg p-8">
+    <h1 class="text-center text-2xl font-bold mb-6">Edit Ad</h1>
+    <form action="/ads/{{$ad->id}}" method="POST" enctype="multipart/form-data" class="max-w-2xl mx-auto">
         @csrf
         @method('PATCH')
-        <div class="space-y-12">
-            <div class="border-b border-gray-900/10 pb-12">
-                <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                    <div class="sm:col-span-4">
-                        <label for="title" class="block text-sm/6 font-medium text-gray-900">Title</label>
-                        <div class="mt-2">
-                            <div class="flex items-center rounded-md bg-white pl-3 outline outline-1 -outline-offset-1 outline-gray-300 focus-within:outline focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
-                                <input type="text" name="title" id="title" value="{{$ad->title}}" class="block min-w-0 grow py-3 pl-1 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6" placeholder="Enter the title" required>
-                            </div>
-                            @error('title')
-                            <p>{{$message}}</p>
-                            @enderror
+        <div class="space-y-8">
+            <div class="border-b border-gray-900/10 pb-6">
+                <div class="grid grid-cols-1 gap-y-4">
+                    <div>
+                        <label for="title" class="block text-sm font-medium text-gray-900">Title</label>
+                        <input type="text" name="title" id="title" value="{{ $ad->title }}" class="w-full rounded-md border-gray-300 py-2 px-3 text-gray-900 placeholder-gray-400 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter the title" required>
+                        <x-form-error name="title"/>
+                    </div>
+
+                    <div>
+                        <label for="description" class="block text-sm font-medium text-gray-900">Description</label>
+                        <textarea name="description" id="description" rows="3" class="w-full rounded-md border-gray-300 py-2 px-3 text-gray-900 placeholder-gray-400 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Write a few sentences about the product." required>{{ $ad->description }}</textarea>
+                        <x-form-error name="description"/>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-900">Images</label>
+                        <div id="image-container" class="mt-2 flex flex-col gap-4">
+                            @foreach($ad->images as $image)
+                                <div class="relative input-wrapper">
+                                    <img src="{{ asset('storage/' . $image->path) }}" class="w-24 h-24 rounded-md" id="image-preview-{{ $image->id }}">
+                                    <button type="button" class="absolute top-0 right-0 text-red-500 text-sm font-semibold remove-btn" data-image-id="{{ $image->id }}">Remove</button>
+                                </div>
+                            @endforeach
                         </div>
+                        <button type="button" id="add-image-btn" class="mt-4 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 focus:ring-2 focus:ring-indigo-500">Add Image</button>
+                        <x-form-error name="image"/>
+                    </div>
+                </div>
+            </div>
 
-                        <div class="col-span-full">
-                            <label for="about" class="block text-sm/6 font-medium text-gray-900">Description</label>
-                            <div class="mt-2">
-                                <textarea name="description" id="description" rows="3" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" required>{{ $ad->description }}</textarea>
-                            </div>
-                            @error('description')
-                            <p>{{$message}}</p>
-                            @enderror
-                            <p class="mt-3 text-sm/6 text-gray-600">Write a few sentences about product.</p>
-                        </div>
+            <div class="border-b border-gray-900/10 pb-6">
+                <h2 class="text-base font-semibold text-gray-900">Personal Information</h2>
+                <p class="mt-1 text-sm text-gray-600">Enter the location and important information about your product.</p>
+                <div class="grid grid-cols-1 gap-y-4">
+                    <div>
+                        <label for="city" class="block text-sm font-medium text-gray-900">City</label>
+                        <input type="text" name="city" id="city" value="{{ $ad->city }}" class="w-full rounded-md border-gray-300 py-2 px-3 text-gray-900 placeholder-gray-400 focus:ring-indigo-500 focus:border-indigo-500" required>
+                        <x-form-error name="city"/>
+                    </div>
 
+                    <div>
+                        <label for="province" class="block text-sm font-medium text-gray-900">State / Province</label>
+                        <input type="text" name="province" id="province" value="{{ $ad->province }}" class="w-full rounded-md border-gray-300 py-2 px-3 text-gray-900 placeholder-gray-400 focus:ring-indigo-500 focus:border-indigo-500" required>
+                        <x-form-error name="province"/>
+                    </div>
 
+                    <div>
+                        <label for="postal_code" class="block text-sm font-medium text-gray-900">ZIP / Postal Code</label>
+                        <input type="text" name="postal_code" id="postal_code" value="{{ $ad->postal_code }}" class="w-full rounded-md border-gray-300 py-2 px-3 text-gray-900 placeholder-gray-400 focus:ring-indigo-500 focus:border-indigo-500" required>
+                        <x-form-error name="postal_code"/>
+                    </div>
 
-                        <div class="col-span-full">
-                            <label for="image" class="block text-sm/6 font-medium text-gray-900">Images</label>
-                            <div class="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
-                                <div class="text-center">
-                                    <img id="image-preview" class="mx-auto mb-4 hidden size-24 rounded-md" alt="Image Preview" />
-                                    <svg id="icon-placeholder" class="mx-auto size-12 text-gray-300" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" data-slot="icon">
-                                        <path fill-rule="evenodd" d="M1.5 6a2.25 2.25 0 0 1 2.25-2.25h16.5A2.25 2.25 0 0 1 22.5 6v12a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 18V6ZM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0 0 21 18v-1.94l-2.69-2.689a1.5 1.5 0 0 0-2.12 0l-.88.879.97.97a.75.75 0 1 1-1.06 1.06l-5.16-5.159a1.5 1.5 0 0 0-2.12 0L3 16.061Zm10.125-7.81a1.125 1.125 0 1 1 2.25 0 1.125 1.125 0 0 1-2.25 0Z" clip-rule="evenodd" />
-                                    </svg>
-                                    <div class="mt-4 flex text-sm/6 text-gray-600">
-                                        <label for="image" class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
-                                            <span>Upload images</span>
-                                            <input id="image" name="image[]" type="file" class="sr-only" accept="image/*">
-                                        </label>
-                                        <p class="pl-1">or drag and drop</p>
-                                    </div>
-                                    <p class="text-xs/5 text-gray-600">PNG, JPG, GIF up to 10MB</p>
+                    <div>
+                        <label for="price" class="block text-sm font-medium text-gray-900">Price</label>
+                        <input type="number" name="price" id="price" value="{{ $ad->price }}" class="w-full rounded-md border-gray-300 py-2 px-3 text-gray-900 placeholder-gray-400 focus:ring-indigo-500 focus:border-indigo-500" required>
+                        <x-form-error name="price"/>
+                    </div>
+
+                    <div>
+                        <fieldset>
+                            <legend class="block text-sm font-medium text-gray-900">Condition</legend>
+                            <div class="mt-2 space-y-2">
+                                <div>
+                                    <input type="radio" id="new" name="state" value="new" {{ $ad->state == 'new' ? 'checked' : '' }} required>
+                                    <label for="new" class="ml-2 text-sm text-gray-900">New</label>
+                                </div>
+                                <div>
+                                    <input type="radio" id="used" name="state" value="used" {{ $ad->state == 'used' ? 'checked' : '' }} required>
+                                    <label for="used" class="ml-2 text-sm text-gray-900">Used</label>
+                                </div>
+                                <div>
+                                    <input type="radio" id="old" name="state" value="old" {{ $ad->state == 'old' ? 'checked' : '' }} required>
+                                    <label for="old" class="ml-2 text-sm text-gray-900">Old</label>
                                 </div>
                             </div>
-                        </div>
+                        </fieldset>
+                        <x-form-error name="state"/>
+                    </div>
+
+                    <div>
+                        <fieldset>
+                            <legend class="block text-sm font-medium text-gray-900">Category</legend>
+                            <div class="mt-2 space-y-2">
+                                <div>
+                                    <input type="radio" id="cars" name="category" value="cars" {{ $ad->category == 'cars' ? 'checked' : '' }} required>
+                                    <label for="cars" class="ml-2 text-sm text-gray-900">Cars</label>
+                                </div>
+                                <div>
+                                    <input type="radio" id="electronics" name="category" value="electronics" {{ $ad->category == 'electronics' ? 'checked' : '' }} required>
+                                    <label for="electronics" class="ml-2 text-sm text-gray-900">Electronics</label>
+                                </div>
+                                <div>
+                                    <input type="radio" id="hardware" name="category" value="hardware" {{ $ad->category == 'hardware' ? 'checked' : '' }} required>
+                                    <label for="hardware" class="ml-2 text-sm text-gray-900">Hardware</label>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <x-form-error name="category"/>
                     </div>
                 </div>
             </div>
-
-            <div class="border-b border-gray-900/10 pb-12">
-                <h2 class="text-base/7 font-semibold text-gray-900">Personal Information</h2>
-                <p class="mt-1 text-sm/6 text-gray-600">Enter the location and important information about your product.</p>
-
-                <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                    <div class="sm:col-span-3">
-                        <div class="sm:col-span-2 sm:col-start-1">
-                            <label for="city" class="block text-sm/6 font-medium text-gray-900">City</label>
-                            <div class="mt-2">
-                                <input type="text" name="city" id="city" autocomplete="address-level2" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" value="{{$ad->city}}" required>
-                            </div>
-                            @error('city')
-                            <p>{{$message}}</p>
-                            @enderror
-                        </div>
-
-                        <div class="sm:col-span-2">
-                            <label for="province" class="block text-sm/6 font-medium text-gray-900">State / Province</label>
-                            <div class="mt-2">
-                                <input type="text" name="province" id="province" autocomplete="address-level1" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" value="{{$ad->province}}"required>
-                            </div>
-                            @error('province')
-                            <p>{{$message}}</p>
-                            @enderror
-                        </div>
-
-                        <div class="sm:col-span-2">
-                            <label for="postal_code" class="block text-sm/6 font-medium text-gray-900">ZIP / Postal code</label>
-                            <div class="mt-2">
-                                <input type="text" name="postal_code" id="postal_code" autocomplete="postal_code" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" value="{{$ad->postal_code}}"required>
-                            </div>
-                            @error('postal_code')
-                            <p>{{$message}}</p>
-                            @enderror
-                        </div>
-                        <div class="sm:col-span-2">
-                            <label for="price" class="block text-sm/6 font-medium text-gray-900">Price</label>
-                            <div class="mt-2">
-                                <input type="number" name="price" id="price" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" value="{{$ad->price}}" required>
-                            </div>
-                            @error('price')
-                            <p>{{$message}}</p>
-                            @enderror
-                        </div>
-                    </div>
-                    <div>
-                        <input type="radio" id="new" name="state" value="new" {{ $ad->state === 'new' ? 'checked' : '' }} required/>
-                        <label for="new">New</label>
-
-                        <input type="radio" id="used" name="state" value="used" {{ $ad->state === 'used' ? 'checked' : '' }}required/>
-                        <label for="used">Used</label>
-
-                        <input type="radio" id="old" name="state" value="old" {{ $ad->state === 'old' ? 'checked' : '' }} required/>
-                        <label for="old">Old</label>
-                    </div>
-                    @error('state')
-                    <p>{{$message}}</p>
-                    @enderror
-
-                    <div>
-                        <input type="radio" id="cars" name="category" value="cars" {{ $ad->category === 'cars' ? 'checked' : '' }} required/>
-                        <label for="new">Cars</label>
-
-                        <input type="radio" id="electronics" name="category" value="electronics" {{ $ad->category === 'electronics' ? 'checked' : '' }} required/>
-                        <label for="used">Electronics</label>
-
-                        <input type="radio" id="hardware" name="category" value="hardware" {{ $ad->category === 'hardware' ? 'checked' : '' }} required/>
-                        <label for="old">Hardware</label>
-                    </div>
-                    @error('category')
-                    <p>{{$message}}</p>
-                    @enderror
-                </div>
-            </div>
         </div>
-        <div class="mt-6 flex items-center justify-end gap-x-6">
-            <button form="delete-form" class="text-red-500">Delete</button>
-            <a href="/ads/{{$ad->id}}" class="text-sm/6 font-semibold text-gray-900">Cancel</a>
-            <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Update</button>
+
+        <div class="mt-6 flex items-center justify-end gap-x-4">
+            <a href="/profile/index" class="text-sm font-semibold text-gray-900">Cancel</a>
+            <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus:ring-2 focus:ring-indigo-500">Save</button>
         </div>
     </form>
 
-    <form method="POST" action="/ads/{{$ad->id}}" class="hidden" id="delete-form">
-        @csrf
-        @method('DELETE')
-    </form>
+    @if(isset($image))
+        <form method="POST" action="/ads/{{$ad->id}}/image/{{$image->id}}" class="hidden" id="delete-form">
+            @csrf
+            @method('DELETE')
+        </form>
+    @endif
+
     <script>
-        document.getElementById('image').addEventListener('change', function (event) {
-            const file = event.target.files[0]; // Get the selected file
-            const preview = document.getElementById('image-preview');
-            const placeholder = document.getElementById('icon-placeholder');
+        document.addEventListener('DOMContentLoaded', function () {
+            const imageContainer = document.getElementById('image-container');
+            const addImageBtn = document.getElementById('add-image-btn');
+            let imageCount = {{ count($ad->images) }};
 
-            if (file) {
-                const reader = new FileReader();
+            addImageBtn.addEventListener('click', () => {
+                if (imageCount < 3) {
+                    addImageInput();
+                }
+            });
 
-                reader.onload = function (e) {
-                    preview.src = e.target.result; // Set the preview source
-                    preview.classList.remove('hidden'); // Show the preview
-                    placeholder.classList.add('hidden'); // Hide the placeholder
-                };
+            document.querySelectorAll('.remove-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    const imageId = this.getAttribute('data-image-id');
+                    removeImage(this.parentElement, imageId);
+                });
+            });
 
-                reader.readAsDataURL(file); // Read the file as a data URL
-            } else {
-                preview.src = ''; // Clear the preview source
-                preview.classList.add('hidden'); // Hide the preview
-                placeholder.classList.remove('hidden'); // Show the placeholder
+            function addImageInput() {
+                const inputWrapper = document.createElement('div');
+                inputWrapper.className = 'relative';
+
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.name = `image[]`;
+                input.accept = 'image/*';
+                input.className = 'block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border file:border-gray-300 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100';
+
+                const previewWrapper = document.createElement('div');
+                previewWrapper.className = 'flex items-center gap-2 mt-2';
+
+                const img = document.createElement('img');
+                img.className = 'w-24 h-24 rounded-md';
+                img.style.display = 'none';
+
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'absolute top-0 right-0 text-red-500 text-sm font-semibold';
+                removeBtn.style.display = 'none';
+                removeBtn.textContent = 'Remove';
+
+                removeBtn.addEventListener('click', () => {
+                    imageContainer.removeChild(inputWrapper);
+                    imageCount--;
+                    toggleAddButtonVisibility();
+                });
+
+                input.addEventListener('change', function (event) {
+                    const file = event.target.files[0];
+
+                    if (file) {
+                        const reader = new FileReader();
+
+                        reader.onload = function (e) {
+                            img.src = e.target.result;
+                            img.style.display = 'block';
+                            removeBtn.style.display = 'inline';
+
+                            // Hide the file input after an image is selected
+                            input.style.display = 'none';
+
+                            toggleAddButtonVisibility();
+                        };
+
+                        reader.readAsDataURL(file);
+                    }
+                });
+
+                previewWrapper.appendChild(img);
+                previewWrapper.appendChild(removeBtn);
+
+                inputWrapper.appendChild(input);
+                inputWrapper.appendChild(previewWrapper);
+
+                imageContainer.appendChild(inputWrapper);
+
+                imageCount++;
+                toggleAddButtonVisibility();
             }
-        });
 
+            function removeImage(wrapper, imageId) {
+                if (imageId) {
+                    const deleteForm = document.getElementById('delete-form');
+                    deleteForm.action = `/ads/{{$ad->id}}/image/${imageId}`;
+                    deleteForm.submit();
+                } else {
+                    imageContainer.removeChild(wrapper);
+                    imageCount--;
+                    toggleAddButtonVisibility();
+                }
+            }
+
+            function toggleAddButtonVisibility() {
+                addImageBtn.style.display = imageCount < 3 ? 'block' : 'none';
+            }
+
+            // Initialize button visibility
+            toggleAddButtonVisibility();
+        });
     </script>
+    </div>
 </x-layout>

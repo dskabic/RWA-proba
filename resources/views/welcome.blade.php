@@ -1,6 +1,43 @@
 <x-layout>
-    <x-slot:heading>Home page</x-slot:heading>
-    <h1 class="text-2xl font-bold mb-6">Welcome to our Second Hand Shop.</h1>
+    <x-slot:heading>Welcome to our Second Hand Shop</x-slot:heading>
+
+    <!-- Top Cards Section -->
+
+    <h2 class="text-2xl font-bold mb-6">Popular Categories</h2>
+    <div class="grid grid-cols-4 gap-4 mb-6">
+        <a href="/ads" class="rounded-lg overflow-hidden shadow-md hover:scale-105 transition-transform hover:border-blue-500 hover:border-2">
+            <div class="relative w-full h-48">
+                <img src="https://cdn-icons-png.flaticon.com/512/3867/3867208.png"
+                     alt="Image for General Ads"
+                     class="absolute inset-0 w-full h-full object-contain rounded-lg">
+            </div>
+        </a>
+        <a href="/ads/category/cars" class="rounded-lg overflow-hidden shadow-md hover:scale-105 transition-transform hover:border-blue-500 hover:border-2">
+            <div class="relative w-full h-48">
+                <img src="https://cdn-icons-png.flaticon.com/512/55/55283.png"
+                     alt="Image for Car Ads"
+                     class="absolute inset-0 w-full h-full object-contain rounded-lg">
+            </div>
+        </a>
+        <a href="/ads/category/electronics" class="rounded-lg overflow-hidden shadow-md hover:scale-105 transition-transform hover:border-blue-500 hover:border-2">
+            <div class="relative w-full h-48">
+                <img src="https://static.thenounproject.com/png/1180247-200.png"
+                     alt="Image for Electronics Ads"
+                     class="absolute inset-0 w-full h-full object-contain rounded-lg">
+            </div>
+        </a>
+
+        <a href="/ads/category/hardware" class="rounded-lg overflow-hidden shadow-md hover:scale-105 transition-transform hover:border-blue-500 hover:border-2">
+            <div class="relative w-full h-48">
+                <img src="https://images.freeimages.com/fic/images/icons/1580/devine_icons_part_2/512/device_and_hardware.png"
+                     alt="Image for Hardware Ads"
+                     class="absolute inset-0 w-full h-full object-contain rounded-lg">
+            </div>
+        </a>
+    </div>
+
+    <!-- Main Content Section -->
+    <h2 class="text-2xl font-bold mb-6">Recent Ads</h2>
     <div class="space-y-4">
         @foreach($ads as $ad)
             <a class="flex items-center p-4 bg-white shadow-md rounded-lg hover:border-blue-500 hover:border-2"
@@ -11,7 +48,7 @@
                     <div class="flex-shrink-0 w-1/3">
                         <img src="{{ Storage::url($ad->images->first()->path) }}"
                              alt="Image for {{ $ad->title }}"
-                             class="w-full h-40 object-cover rounded-l-lg">
+                             class="w-full h-40 object-cover rounded-lg">
                     </div>
                 @else
                     <div class="flex-shrink-0 w-1/3">
@@ -56,7 +93,4 @@
             </a>
         @endforeach
     </div>
-
-
-
 </x-layout>
