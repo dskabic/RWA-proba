@@ -78,7 +78,7 @@ class AdController extends Controller
         request()->validate([
             'title' => ['required', 'min:3'],
             'description' => ['required', 'min:3'],
-            'price' => ['required', 'numeric'],
+            'price' => ['required', 'numeric', 'min:0'],
             'city' => ['required', 'min:3'],
             'province' => ['required', 'min:3'],
             'postal_code' => ['required', 'min:3'],
@@ -126,11 +126,12 @@ class AdController extends Controller
         request()->validate([
             'title' => ['required', 'min:3'],
             'description' => ['required', 'min:3'],
-            'price' => ['required'],
+            'price' => ['required', 'numeric', 'min:0'],
             'city' => ['required', 'min:3'],
             'province' => ['required', 'min:3'],
             'postal_code' => ['required', 'min:3'],
-
+            'image' => ['nullable', 'array'], // Ensure images are an array
+            'image.*' => ['file', 'max:10240'], // Validate each file
             'category' => ['required', 'min:3'],
             'state' => ['required', 'min:3'],
         ]);
@@ -160,7 +161,6 @@ class AdController extends Controller
 
     }
     public function destroy(Ad $ad) {
-        $user = $ad->user_id;
         $ad->delete();
         return redirect('/profile/index/');
     }

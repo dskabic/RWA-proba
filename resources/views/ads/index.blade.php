@@ -34,7 +34,7 @@
                     <div class="flex-shrink-0 w-1/3">
                         <img src="{{ Storage::url($ad->images->first()->path) }}"
                              alt="Image for {{ $ad->title }}"
-                             class="w-full h-40 object-cover rounded-lg">
+                             class="w-full h-40 object-contain rounded-lg">
                     </div>
                 @else
                     <div class="flex-shrink-0 w-1/3">
@@ -49,14 +49,14 @@
                     <div class="font-bold text-xl text-blue-500">
                         {{ $ad->title }}
                     </div>
-                    <p class="text-gray-600">
-                        Posted by: {{ $ad->user->first_name }}
+                    <p class="text-gray-600 mt-2">
+                        Posted by: {{ $ad->user->first_name }} {{ $ad->user->last_name }}
                     </p>
                     <p class="text-gray-500 mt-2">
                         {{ Str::limit($ad->description, 100) }}
                     </p>
                     <p class="text-gray-400 text-sm mt-2">
-                        {{ $ad->city }}, {{ $ad->province }} ({{ $ad->postal_code }})
+                        Location: {{ $ad->city }}, {{ $ad->province }} ({{ $ad->postal_code }})
                     </p>
                     <p class="text-gray-400 text-sm mt-2">
                         Category: {{ ucfirst($ad->category) }} | State: {{ ucfirst($ad->state) }}

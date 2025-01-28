@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::get('/', [AdController::class, 'short_view']);
-Route::view('/contact', 'contact');
+Route::view('/about', 'about');
 //index
 Route::get('/ads', [AdController::class, 'index']);
 Route::get('/ads/category/{category?}', [AdController::class, 'index']);

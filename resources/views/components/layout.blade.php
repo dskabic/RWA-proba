@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Laravel</title>
+    <title>Second Hand Shop</title>
     <style>
         /* Longer input */
         .long-input {
@@ -104,7 +104,7 @@
                                     <a href="/ads/category/hardware">Hardware</a>
                                 </div>
                             </div>
-                            <x-link href="/contact" :active="request()->is('contact')">Contact</x-link>
+                            <x-link href="/about" :active="request()->is('about')">About</x-link>
                         </div>
                     </div>
                 </div>
@@ -160,7 +160,7 @@
             </div>
         </div>
     </nav>
-    @unless(request()->is("ads/{id}") | request()->is("ads/create") |request()->is("ads/*/edit"))
+    @unless(request()->is("ads/create") |request()->is("ads/*/edit"))
     <header class="bg-white shadow">
         <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 flex items-center justify-between">
             <h1 class="text-3xl font-bold tracking-tight text-gray-900">
